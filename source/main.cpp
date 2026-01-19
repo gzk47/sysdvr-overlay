@@ -268,10 +268,7 @@ public:
                 "InfoDvrOverlayCustomDrawerText": "Info",
                 "ModeDvrOverlayCustomDrawerText": "Mode:",
                 "IPAddressDvrOverlayCustomDrawerText": "IP-Address:",
-<<<<<<< HEAD
-=======
                 "IPCVersionDvrOverlayCustomDrawerText": "IPC-Version:",
->>>>>>> Hartie95-master
                 "ChangeModeDvrOverlayCategoryHeaderText": "Change Mode",
                 "OffModeDvrOverlayListItemText": "OFF",
                 "USBModeDvrOverlayListItemText": "USB",
@@ -283,11 +280,9 @@ public:
             }
         )";
         std::string lanPath = std::string("sdmc:/switch/.overlays/lang/") + APPTITLE + "/";
-        fsdevMountSdmc();
-        tsl::hlp::doWithSmSession([&lanPath, &jsonStr]{
+        tsl::hlp::doWithSDCardHandle([&lanPath, &jsonStr]{
             tsl::tr::InitTrans(lanPath, jsonStr);
         });
-        fsdevUnmountDevice("sdmc");
 
         smInitialize();
         if(isServiceRunning("sysdvr")) {
