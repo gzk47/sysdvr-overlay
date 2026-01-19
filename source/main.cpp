@@ -61,6 +61,31 @@ public:
     DvrOverlay(Service* dvrService, bool gotService) {
         this->gotService = gotService;
         this->dvrService = dvrService;
+        
+        std::string jsonStr = R"({
+            "PluginName": "Sysdvr",
+            "SetupSysDvrServiceFailedDvrOverlayErrorDrawerText": "Failed to setup SysDVR Service!\nIs sysdvr running?",
+            "UnkownSysDvrConfigAPIVersionDvrOverlayErrorDrawerText": "Unkown SysDVR Config API: v",
+            "SupportedConfigAPIVersionSysDvrConfigAPIDvrOverlayErrorDrawerText": "\nOnly support Config API v",
+            "InfoDvrOverlayCustomDrawerText": "Info",
+            "ModeDvrOverlayCustomDrawerText": "Mode:",
+            "IPAddressDvrOverlayCustomDrawerText": "IP-Address:",
+            "IPCVersionDvrOverlayCustomDrawerText": "IPC-Version:",
+            "ChangeModeDvrOverlayCategoryHeaderText": "Change Mode",
+            "OffModeDvrOverlayListItemText": "OFF",
+            "USBModeDvrOverlayListItemText": "USB",
+            "TCPModeDvrOverlayListItemText": "TCP",
+            "RTSPModeDvrOverlayListItemText": "RTSP",
+            "SwitchingModeDvrOverlayListItemText": "Switching",
+            "ErrorModeDvrOverlayListItemText": "Error",
+            "UnkownModeDvrOverlayListItemText": "Unkown"
+        })";
+        std::string lanPath = std::string("sdmc:/switch/.overlays/lang/") + APPTITLE + "/";
+        fsdevMountSdmc();
+        tsl::hlp::doWithSmSession([&lanPath, &jsonStr]{
+            tsl::tr::InitTrans(lanPath, jsonStr);
+        });
+        fsdevUnmountDevice("sdmc");
     }
 
     // Called when this Gui gets loaded to create the UI
@@ -259,36 +284,6 @@ private:
 public:
     // libtesla already initialized fs, hid, pl, pmdmnt, hid:sys and set:sys
     virtual void initServices() override {
-        std::string jsonStr = R"(
-            {
-                "PluginName": "Sysdvr",
-                "SetupSysDvrServiceFailedDvrOverlayErrorDrawerText": "Failed to setup SysDVR Service!\nIs sysdvr running?",
-                "UnkownSysDvrConfigAPIVersionDvrOverlayErrorDrawerText": "Unkown SysDVR Config API: v",
-                "SupportedConfigAPIVersionSysDvrConfigAPIDvrOverlayErrorDrawerText": "\nOnly support Config API v",
-                "InfoDvrOverlayCustomDrawerText": "Info",
-                "ModeDvrOverlayCustomDrawerText": "Mode:",
-                "IPAddressDvrOverlayCustomDrawerText": "IP-Address:",
-<<<<<<< HEAD
-=======
-                "IPCVersionDvrOverlayCustomDrawerText": "IPC-Version:",
->>>>>>> Hartie95-master
-                "ChangeModeDvrOverlayCategoryHeaderText": "Change Mode",
-                "OffModeDvrOverlayListItemText": "OFF",
-                "USBModeDvrOverlayListItemText": "USB",
-                "TCPModeDvrOverlayListItemText": "TCP",
-                "RTSPModeDvrOverlayListItemText": "RTSP",
-                "SwitchingModeDvrOverlayListItemText": "Switching",
-                "ErrorModeDvrOverlayListItemText": "Error",
-                "UnkownModeDvrOverlayListItemText": "Unkown"
-            }
-        )";
-        std::string lanPath = std::string("sdmc:/switch/.overlays/lang/") + APPTITLE + "/";
-        fsdevMountSdmc();
-        tsl::hlp::doWithSmSession([&lanPath, &jsonStr]{
-            tsl::tr::InitTrans(lanPath, jsonStr);
-        });
-        fsdevUnmountDevice("sdmc");
-
         smInitialize();
         if(isServiceRunning("sysdvr")) {
             gotService = R_SUCCEEDED(smGetService(&dvr, "sysdvr"));
